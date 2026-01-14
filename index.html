@@ -13,10 +13,6 @@
 
   <p id="user"></p>
 
-  <script type="module">
-    // 🔥 Firebase imports
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getAuth, signInWithPopup, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
     // ⚠️ PALITAN ng Firebase config mo
     const firebaseConfig = {
@@ -42,3 +38,37 @@
 
 </body>
 </html>
+<button onclick="login()">Login with Google</button>
+<p id="user"></p>
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+  import { getAuth, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+  import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyDp_G_ObIUrq9gExn4vC-2ktVzAlzK7Mn8",
+    authDomain: "cashback-app-13a58.firebaseapp.com",
+    projectId: "cashback-app-13a58",
+    appId: "1:66383755540:web:622c5405d6b003861fea01"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const provider = new GoogleAuthProvider();
+  const db = getFirestore(app);
+
+  window.login = async function () {
+    const result = await signInWithPopup(auth, provider);
+    const user = result.user;
+
+    await setDoc(doc(db, "users", user.uid), {
+      name: user.displayName,
+      email: user.email,
+      cashback: 0,
+      createdAt: new Date()
+    });
+
+    document.getElementById("user").innerText =
+      "Welcome " + user.displayName;
+  };
+</script>
