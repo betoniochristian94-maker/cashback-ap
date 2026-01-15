@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Cashback Demo App</title>
+</head>
+<body>
+
+<h2>Cashback Demo App</h2>
+
+<button onclick="login()">Login with Google</button>
+<p id="user"></p>
+
+<h3>Your Cashback: ₱<span id="cashback">0</span></h3>
+<button onclick="addCashback()">Add ₱10</button>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+  import { getAuth, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+  // Firebase config (auth only, walang database)
+  const firebaseConfig = {
+    apiKey: "AIzaSyCLJQckahuisNfW9qd-cqlYKiTHUtD8MHw",
+    authDomain: "cashback-clean.firebaseapp.com",
+    projectId: "cashback-clean",
+    appId: "1:957439708934:web:48f146e1ecc791a1a55887"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const provider = new GoogleAuthProvider();
+
+  // LOGIN FUNCTION
+  window.login = async function() {
+    try {
+      const result = await signInWithPopup(auth, provider);
+      const user = result.user;
+
+      // Save user info sa local storage
+      localStorage.setItem('userName', user.displayName);
+      localStorage.setItem('cashback', localStorage.getItem('cashback') || 0);
+
+      document.getElementById("user").innerText = "Welcome " + user.displayName;
+      document.getElementById("cashback").innerText = localStorage.getItem('cashback');
+    } catch (error) {
+      alert(error.message);
+      console.error(error);
+    }
+  };
+
+  // ADD CASHBACK FUNCTION
+  window.addCashback = function() {
+    let current = parseInt(localStorage.getItem('cashback') || 0);
+    current += 10; // Add ₱10
+    localStorage.setItem('cashback', current);
+    document.getElementById("cashback").innerText = current;
+  };
+
+  // LOAD INFO IF ALREADY LOGGED IN
+  window.onload = function() {
+    const name = localStorage.getItem('userName');
+    const cashback = localStorage.getItem('cashback');
+    if(name){
+      document.getElementById("user").innerText = "Welcome " + name;
+      document.getElementById("cashback").innerText = cashback;
+    }
+  };
+
+</script>
+
+</body>
+</html>
