@@ -23,11 +23,18 @@
 <button onclick="convertLink()">Convert Link</button>
 <p id="convertedLink"></p>
 
+<hr>
+
+<!-- WITHDRAW / CLAIM CASHBACK -->
+<h3>Withdraw / Claim Cashback</h3>
+<button onclick="withdrawCashback()">Withdraw</button>
+<p id="withdrawMessage"></p>
+
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
   import { getAuth, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-  // Firebase config (auth only, walang database)
+  // Firebase config (auth only)
   const firebaseConfig = {
     apiKey: "AIzaSyCLJQckahuisNfW9qd-cqlYKiTHUtD8MHw",
     authDomain: "cashback-clean.firebaseapp.com",
@@ -97,6 +104,21 @@
 
     // Clear input
     document.getElementById("linkInput").value = "";
+  };
+
+  // WITHDRAW / CLAIM CASHBACK
+  window.withdrawCashback = function() {
+    let current = parseInt(localStorage.getItem('cashback') || 0);
+
+    if(current <= 0){
+      document.getElementById("withdrawMessage").innerText = "No cashback to withdraw!";
+      return;
+    }
+
+    // Simulate withdrawal (reset to 0)
+    localStorage.setItem('cashback', 0);
+    document.getElementById("cashback").innerText = 0;
+    document.getElementById("withdrawMessage").innerText = `You have withdrawn ₱${current}!`;
   };
 
   // LOAD INFO IF ALREADY LOGGED IN
