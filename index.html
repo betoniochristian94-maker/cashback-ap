@@ -7,11 +7,21 @@
 
 <h2>Cashback Demo App</h2>
 
+<!-- LOGIN -->
 <button onclick="login()">Login with Google</button>
 <p id="user"></p>
 
+<!-- CASHBACK -->
 <h3>Your Cashback: ₱<span id="cashback">0</span></h3>
 <button onclick="addCashback()">Add ₱10</button>
+
+<hr>
+
+<!-- LINK CONVERTER -->
+<h3>Paste your link here:</h3>
+<input type="text" id="linkInput" placeholder="Paste Shopee/TikTok/Lazada link" style="width:80%">
+<button onclick="convertLink()">Convert Link</button>
+<p id="convertedLink"></p>
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
@@ -53,6 +63,40 @@
     current += 10; // Add ₱10
     localStorage.setItem('cashback', current);
     document.getElementById("cashback").innerText = current;
+  };
+
+  // LINK CONVERTER + AUTO CASHBACK
+  window.convertLink = function() {
+    const rawLink = document.getElementById("linkInput").value.trim();
+
+    if(!rawLink) {
+      alert("Please paste a link!");
+      return;
+    }
+
+    // Simulate conversion
+    let converted = rawLink;
+
+    if(rawLink.includes("shopee")) converted = rawLink + "?ref=cashback";
+    else if(rawLink.includes("lazada")) converted = rawLink + "?ref=cashback";
+    else if(rawLink.includes("tiktok")) converted = rawLink + "?ref=cashback";
+    else {
+      alert("Only Shopee, Lazada, TikTok links are supported!");
+      return;
+    }
+
+    // Show converted link
+    document.getElementById("convertedLink").innerHTML = 
+      `Converted Link: <a href="${converted}" target="_blank">${converted}</a>`;
+
+    // Auto-add ₱5 cashback for demo
+    let current = parseInt(localStorage.getItem('cashback') || 0);
+    current += 5;
+    localStorage.setItem('cashback', current);
+    document.getElementById("cashback").innerText = current;
+
+    // Clear input
+    document.getElementById("linkInput").value = "";
   };
 
   // LOAD INFO IF ALREADY LOGGED IN
